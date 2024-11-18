@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_products_product_cards",
+  "info": {
+    "displayName": "ProductCard",
+    "icon": "archive"
+  },
+  "options": {},
+  "attributes": {
+    "ProductName": {
+      "type": "string"
+    },
+    "SubTitle": {
+      "type": "string"
+    },
+    "ProductImage": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "OldPrice": {
+      "type": "string"
+    },
+    "NewPrice": {
+      "type": "string"
+    }
+  }
+}

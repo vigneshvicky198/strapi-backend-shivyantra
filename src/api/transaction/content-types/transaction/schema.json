@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transactions",
+  "info": {
+    "singularName": "transaction",
+    "pluralName": "transactions",
+    "displayName": "Transaction"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "PaymentId": {
+      "type": "string"
+    },
+    "Amount": {
+      "type": "string"
+    },
+    "Payment_Method": {
+      "type": "string"
+    },
+    "Status": {
+      "type": "string"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "transactions"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "home_sliders",
+  "info": {
+    "singularName": "home-slider",
+    "pluralName": "home-sliders",
+    "displayName": "HomeSlider"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

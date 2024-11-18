@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_products_categories",
+  "info": {
+    "displayName": "Category",
+    "icon": "check",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    }
+  }
+}

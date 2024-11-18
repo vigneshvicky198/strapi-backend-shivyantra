@@ -1,0 +1,68 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ProductName": {
+      "type": "string"
+    },
+    "ProductImage": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "products"
+    },
+    "SubTitle": {
+      "type": "string"
+    },
+    "Offer": {
+      "type": "integer"
+    },
+    "Price": {
+      "type": "decimal"
+    },
+    "SKU": {
+      "type": "string"
+    },
+    "Weight": {
+      "type": "float"
+    },
+    "Dimensions": {
+      "type": "string"
+    },
+    "Material": {
+      "type": "enumeration",
+      "enum": [
+        "Gold",
+        "Silver",
+        "Brass",
+        "Copper",
+        "Panchalogam"
+      ]
+    },
+    "AvailableQuantity": {
+      "type": "integer"
+    },
+    "Description": {
+      "type": "blocks"
+    }
+  }
+}

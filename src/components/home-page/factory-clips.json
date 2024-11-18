@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_home_page_factory_clips",
+  "info": {
+    "displayName": "FactoryClips",
+    "icon": "grid",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Media": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "Video",
+        "Image"
+      ]
+    },
+    "EmbedCode": {
+      "type": "text"
+    }
+  }
+}

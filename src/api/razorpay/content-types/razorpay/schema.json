@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "razorpays",
+  "info": {
+    "singularName": "razorpay",
+    "pluralName": "razorpays",
+    "displayName": "Razorpay"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "KeyId": {
+      "type": "string"
+    },
+    "KeySecret": {
+      "type": "string"
+    }
+  }
+}
