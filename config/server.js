@@ -1,11 +1,8 @@
 module.exports = ({ env }) => ({
-  host: env('HOST', '0.0.0.0'),
-  port: env.int('PORT', 1340),
-  url: `https://api.shriworkscraft.com`,
+  host: env('HOST', '0.0.0.0'),  // This makes the server accessible on localhost
+  port: env.int('PORT', 1342), 
+  url:'https://api.shivyantra.com',
   app: {
     keys: env.array('APP_KEYS'),
-  },
-  webhooks: {
-    populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
-  },
+  },   // You can change this if you want a different port
 });

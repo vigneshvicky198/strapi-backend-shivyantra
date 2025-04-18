@@ -7,7 +7,7 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
 };
 
-const sendOTPMessage = async (emailId, otp) => {
+const sendOTPMessage = async (emailId, otp, name) => {
     console.log(emailId,'sid');
     try{
       await strapi.plugins['email'].services.email.send({
@@ -16,11 +16,11 @@ const sendOTPMessage = async (emailId, otp) => {
         // cc: 'valid email address',
         // bcc: 'valid email address',
         replyTo: process.env.SMTP_USERNAME,
-        subject: 'Your Verification Code for Shriworks',
+        subject: 'Your Verification Code for Shivyantra',
         text: '${fieldName}', // Replace with a valid field ID
-        html: `<p>Dear Team,</p>
-               <p>Greetings! Your verification code for Shriworks is <span class="code">${otp}</span>. Please keep this code confidential and do not share it with anyone.</p>
-               <p>Thank you,<br>Team Shriworks</p>`, 
+        html: `<p>Hi ${name},</p>
+               <p>Greetings! Your verification code for Shivyantra is <span class="code">${otp}</span>. Please keep this code confidential and do not share it with anyone.</p>
+               <p>Thank you,<br>Team Shivyantra</p>`, 
           
       })
   } catch(err) {

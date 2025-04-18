@@ -4,7 +4,8 @@
   "info": {
     "singularName": "purchased-order",
     "pluralName": "purchased-orders",
-    "displayName": "PurchasedOrders"
+    "displayName": "PurchasedOrders",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -24,6 +25,15 @@
     },
     "Quantity": {
       "type": "integer"
+    },
+    "Notes": {
+      "type": "text"
+    },
+    "invoice": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::invoice.invoice",
+      "inversedBy": "purchased_orders"
     }
   }
 }

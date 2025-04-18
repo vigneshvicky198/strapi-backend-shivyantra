@@ -42,8 +42,9 @@ module.exports = {
       },
       
       async resendOtp(ctx){
-        const { emailId } = ctx.request.body;
-        console.log(emailId); 
+        const { emailId, name } = ctx.request.body;
+        console.log(emailId);
+        console.log(name);
         if (!emailId ) {
           return ctx.badRequest('Email is required for resend otp');
         }
@@ -57,7 +58,7 @@ module.exports = {
         const otp = generateOTP();
         console.log('otp:', otp);
         try {
-          await sendOTPMessage(emailId, otp);
+          await sendOTPMessage(emailId, otp, name);
           // You may want to store the OTP and its expiration time in a secure way
           // e.g., in a database or temporary cache
           // For demonstration, we'll store it in the data object
@@ -72,4 +73,6 @@ module.exports = {
         }
         ctx.send({ message: 'OTP sent successfully' });
       }
-}
+} 
+
+

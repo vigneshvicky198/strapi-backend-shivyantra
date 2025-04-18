@@ -1,4 +1,5 @@
 'use strict';
+const { sendOrderEmail } = require('./utils/orderEmail');
 const { generateOTP, sendOTPMessage } = require('./utils/otpUtils');
 
 module.exports = {
@@ -35,7 +36,7 @@ module.exports = {
         console.log('otp:', otp);
         // Send OTP via SMS
         try {
-          await sendOTPMessage(data.email, otp);
+          await sendOTPMessage(data.email, otp, data.username);
           // You may want to store the OTP and its expiration time in a secure way
           // e.g., in a database or temporary cache
           // For demonstration, we'll store it in the data object

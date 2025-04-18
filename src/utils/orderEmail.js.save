@@ -1,0 +1,307 @@
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const nodemailer = require('nodemailer');
+
+
+// const generateInvoice = async (orderDetails, customerDetails) => {
+//     const PDFDocument = require('pdfkit');
+//     const fs = require('fs');
+  
+//     const fileName = `Invoice_${orderDetails.invoiceNo}.pdf`;
+//     const doc = new PDFDocument();
+  
+//     doc.pipe(fs.createWriteStream(fileName));
+  
+//     // Header Section
+//     doc
+//       .fontSize(20)
+//       .text('INVOICE', { align: 'center' })
+//       .moveDown(1);
+  
+//     doc
+//       .fontSize(12)
+//       .text(`Invoice No: ${orderDetails.invoiceNo}`)
+//       .text(`Invoice Date: ${orderDetails.date}`)
+//       .moveDown(1);
+  
+//     // Customer Details
+//     doc
+//       .fontSize(12)
+//       .text(`Name: ${customerDetails.name}`)
+//       .text(`Address: ${customerDetails.address}`)
+//       .text(`Mobile: ${customerDetails.mobile}`)
+//       .moveDown(1);
+  
+//     // Table Headerconst fs = require('fs');
+
+//     doc
+//       .text('Sl. No.', 50, doc.y, { width: 50, align: 'left' })
+//       .text('Name of the Product', 150, doc.y, { width: 200, align: 'left' })
+//       .text('Qty', 350, doc.y, { width: 50, align: 'right' })
+//       .text('Rate', 400, doc.y, { width: 50, align: 'right' })
+//       .text('Amount', 450, doc.y, { width: 100, align: 'right' })
+//       .moveDown(1);
+  
+//     // Product Details
+//     orderDetails.products.forEach((product, index) => {
+//       doc
+//         .text(index + 1, 50, doc.y, { width: 50, align: 'left' })
+//         .text(product.product.ProductName, 150, doc.y, { width: 200, align: 'left' })
+//         .text(product.Quantity, 350, doc.y, { width: 50, align: 'right' })
+//         .text(product.product.NewPrice.toFixed(2), 400, doc.y, { width: 50, align: 'right' })
+//         .text((Number(product.Quantity) * Number(product.product.NewPrice)).toFixed(2), 450, doc.y, { width: 100, align: 'right' })
+//         .moveDown(1);
+//     });
+  
+//     // Total Section
+//     doc
+//       .text(`Total Amount: ₹${orderDetails.total.toFixed(2)}`, { align: 'right' })
+//       .moveDown(2);
+  
+//     doc.text('Thank you for your purchase!', { align: 'center' });
+  
+//     doc.end();
+  
+//     return fileName;
+//   };
+const path = require('path'); // Import the path module for safety
+const FormData = require('form-data');
+const axios = require('axios');
+const os = require('os'); // Import os for temporary directory
+const api_url = 'https://api.shriworks.com'
+
+const generateInvoice = async (orderDetails, customerDetails,paymentId) => {
+  const fileName = `Invoice_${orderDetails.invoiceNo}.pdf`;
+  // const tempDir = os.tmpdir(); // System temporary directory
+const htdocsPath = '/home/shriworks-api/htdocs';
+//const filePath = path.join(__dirname, fileName);
+
+const filePath = path.join(htdocsPath, fileName);
+  // const filePath = path.join(__dirname, fileName);
+
+  const doc = new PDFDocument({ size: 'A4', margin: 50 });
+
+  const writeStream = fs.createWriteStream(filePath);
+  doc.pipe(writeStream);
+  // Add Logo (Adjust the path and dimensions as needed)
+  const logoPath = path.join(__dirname, 'invoiceLogo', 'invoiceLogo.png'); // Correct path
+  doc.image(logoPath, 50, 50, { width: 50, height: 50 }); // Adjust position and size as needed
+
+  // Header Section with Business Name Next to Logo
+  doc
+    .fontSize(14)
+    .text('SHRI WORKS', 110, 55, { align: 'left' }) // Position after logo
+    .fontSize(10)
+    .text('Temple & Home Pooja Articles', 110, 75, { align: 'left' })
+    .text('GSTIN: 33ARGPA7073G1Z2', 110, 90, { align: 'left' })
+    .text('242A Arcot Road, Vadapalani, Chennai - 600026', 110, 105, { align: 'left' })
+    .moveDown(1);
+
+  // Contact Details
+  doc
+    .fontSize(10)
+    .text('Contact No: 9176554626, 9942844005', 400, 50, { align: 'left' })
+    .moveDown(2);
+
+  // Invoice Title
+  doc
+    .fontSize(16)
+    .text('INVOICE', { align: 'center' })
+    .moveDown(1);
+
+  // Invoice Details
+  doc
+    .fontSize(10)
+    .text(`Invoice No: ${orderDetails.invoiceNo}`, 50)
+    .text(`Payment Id: ${paymentId}`)
+    .text(`Invoice Date: ${orderDetails.date}`)
+    .moveDown(2);
+
+  // Customer Details
+  doc
+    .text('Details of Receiver / Billed to:', { align: 'left', underline: true })
+    .text(`Name: ${customerDetails.name}`)
+    .text(`Address: ${customerDetails.address}`)
+    .text(`Mobile: ${customerDetails.mobile}`)
+    .moveDown(1);
+
+  // Table Header
+  const tableTop = doc.y;
+  const columnXPositions = {
+    productName: 50,
+    qty: 300,
+    amount: 450,
+  };
+
+  doc
+    .fontSize(10)
+    .text('Product Name', columnXPositions.productName, tableTop)
+    .text('Quantity', columnXPositions.qty, tableTop, { align: 'center' })
+    .text('Amount', columnXPositions.amount, tableTop, { align: 'right' });
+
+  doc.moveTo(50, doc.y + 10).lineTo(550, doc.y + 10).stroke();
+
+  // Table Content
+  let rowY = doc.y + 15;
+  orderDetails.products.forEach((product) => {
+    const rowHeight = doc.heightOfString(product.product.ProductName, {
+      width: 280,
+      align: 'left',
+    });
+
+    // Check if a new page is needed
+    if (rowY + rowHeight > doc.page.height - 50) {
+      doc.addPage();
+      rowY = 50;
+
+      doc
+        .fontSize(10)
+        .text('Product Name', columnXPositions.productName, rowY)
+        .text('Quantity', columnXPositions.qty, rowY, { align: 'center' })
+        .text('Amount', columnXPositions.amount, rowY, { align: 'right' });
+      doc.moveTo(50, doc.y + 10).lineTo(550, doc.y + 10).stroke();
+
+      rowY += 15;
+    }
+
+    doc
+      .fontSize(10)
+      .text(product.product.ProductName, columnXPositions.productName, rowY, {
+        width: 280,
+        align: 'left',
+      })
+      .text(product.Quantity, columnXPositions.qty, rowY, { align: 'center' })
+      .text(
+        (Number(product.Quantity) * Number(product.product.NewPrice)).toFixed(2),
+        columnXPositions.amount,
+        rowY,
+        { align: 'right' }
+      );
+
+    rowY += rowHeight + 10;
+  });
+
+  doc.moveTo(50, rowY).lineTo(550, rowY).stroke();
+
+  // Total Section
+  rowY += 10;
+  doc
+    .fontSize(10)
+    .text(`Total Amount: Rs.${orderDetails.total.toFixed(2)}`, 350, rowY, {
+      align: 'right',
+    });
+    rowY += 20;
+  doc
+    .fontSize(10)
+    .text(`(Inclusive of GST)`, 350, rowY, {
+      align: 'right',
+    });
+  // Footer
+  doc
+    .fontSize(10)
+    .text('Bank Details:', 50, rowY + 50)
+    .text('Account Holder Name: Anitha', 50, rowY + 65)
+    .text('Account No: 0146201811', 50, rowY + 80)
+    .text('Branch IFSC: KKBK0000466', 50, rowY + 95)
+    .moveDown(1);
+
+  doc.text('Terms and Conditions:', { underline: true }).moveDown(0.5);
+  doc
+    .text('1. Goods Once Sold Cannot be Taken Back.')
+    .text('2. No Cash Refund, No Exchange.');
+
+  doc.moveDown(2).text('Authorized Signatory', { align: 'right' });
+  // doc.moveDown(2).text('Shriworks', { align: 'right' });
+  doc.moveDown(0.5); // Adjust spacing to move slightly below
+  doc.text('Shriworks', { align: 'right' });
+
+  doc.end();
+
+   // Wait for the PDF file to be fully written
+   await new Promise((resolve, reject) => {
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
+  });
+
+  console.log(`PDF Generated: ${filePath}`);
+  console.log(fs.createReadStream(filePath).path,'file path ');
+  // Prepare and send the file to Strapi API
+  let invoiceId;
+  console.log('user id from order email', customerDetails.userId);
+  try{
+    const res = await axios.post(`${api_url}/api/invoices`,{
+      data:{
+        user:customerDetails.userId,
+      }
+    })
+    invoiceId = res.data.data.id;
+  }
+  catch(err){
+    console.log(err);
+  }
+  if (fs.existsSync(filePath)) {
+    console.log('File exists at:', filePath);
+  } else {
+    console.error('File does not exist at:', filePath);
+    }
+  const formData = new FormData();
+  formData.append('files', fs.createReadStream(filePath)); // Add a specific file name
+  formData.append('ref','api::invoice.invoice');
+  formData.append('refId',invoiceId)
+  formData.append('field',"Invoice");
+  // formData.append('data', JSON.stringify({ Invoice: orderDetails.invoiceNo }));
+
+  try {
+    const response = await axios.post(`${api_url}/api/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('File uploaded successfully:', response.data);
+  } catch (error) {
+    console.log('Error uploading file:', error.message);
+    // throw error; // Optionally rethrow the error
+  }
+
+  // const sendEmail = await sendOrderEmail(customerDetails.emailId, fileName);
+
+  return fileName;
+};
+
+const sendOrderEmail = async (emailId, pdf,customerDetails) => {
+  const amount = Number(customerDetails.total);
+  console.log(customerDetails,'total');
+
+  try{
+    const attachment = fs.readFileSync(pdf);
+
+    await strapi.plugins['email'].services.email.send({
+      to: 'gokulsankar88@gmail.com',
+      from: process.env.SMTP_USERNAME, // e.g. single sender verification in SendGrid
+      // cc: 'valid email address',
+      // bcc: 'valid email address',
+      replyTo: process.env.SMTP_USERNAME,
+      subject: 'Your Verification Code for Shriworks',
+      text: 'Your invoice for the recent purchase has been attached.', // Plain-text fallback content
+      html: `<p>Dear ${emailId},</p>
+             <p>Thank you for shopping with Shriworks. Attached is the invoice for your recent purchase.</p>
+             <p>Invoice Details:</p>
+             <ul>
+                <li><strong>Invoice Number:</strong> ${customerDetails.mobile}</li>
+                <li><strong>Date:</strong> ${Date.now()}</li>
+                <li><strong>Total Amount:</strong> ₹${amount.toFixed(2)}</li>
+             </ul>
+             <p>We hope you enjoy your purchase. If you have any questions, feel free to contact us.</p>
+             <p>Thank you,<br>Team Shriworks</p>`, 
+      attachments: [{
+        filename: pdf,
+        content: attachment
+      }]      
+        
+    })
+} catch(err) {
+    console.log(err);
+}
+};
+  module.exports = {generateInvoice, sendOrderEmail};

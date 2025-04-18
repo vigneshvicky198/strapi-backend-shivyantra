@@ -1,5 +1,5 @@
 const axios = require('axios');
-const api_url = 'https://api.shriworkscraft.com';
+const api_url = 'https://api.shriworks.com';
 
 
 const adjustOrDeleteCarts = async (cartItem) => {

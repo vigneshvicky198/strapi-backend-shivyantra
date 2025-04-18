@@ -91,6 +91,36 @@
       "relation": "oneToMany",
       "target": "api::transaction.transaction",
       "mappedBy": "users_permissions_user"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "users_permissions_user"
+    },
+    "invoices": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::invoice.invoice",
+      "mappedBy": "user"
+    },
+    "Address": {
+      "type": "text"
+    },
+    "Mobile": {
+      "type": "string"
+    },
+    "City": {
+      "type": "string"
+    },
+    "State": {
+      "type": "string"
+    },
+    "Pincode": {
+      "type": "string"
+    },
+    "Landmark": {
+      "type": "string"
     }
   }
 }

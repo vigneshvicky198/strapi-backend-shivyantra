@@ -18,5 +18,13 @@ module.exports = {
                 policies:[], 
             },
         },
+        {
+            method:"POST",
+            path:"/contests/:amount/create-order",
+            handler:"custom.order",
+            config: {
+                policies:[], 
+            },
+        },
     ]
 }

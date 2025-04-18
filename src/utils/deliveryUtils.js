@@ -1,67 +1,50 @@
-const calculateDeliveryCharge = (weight, state) => {
-      let charge = 0;
-  
-      // Convert weight to grams for easier comparison
-      const weightInGrams = weight * 1000;
-  
-      if (state === 'Tamil Nadu') {
-          if (weightInGrams <= 250) charge = 80;
-          else if (weightInGrams <= 500) charge = 95;
-          else if (weightInGrams <= 1000) charge = 130;
-          else if (weightInGrams <= 1500) charge = 165;
-          else if (weightInGrams <= 2000) charge = 200;
-          else if (weightInGrams <= 2500) charge = 235;
-          else if (weightInGrams <= 3000) charge = 270;
-          else if (weightInGrams <= 3500) charge = 305;
-          else if (weightInGrams <= 4000) charge = 340;
-          else if (weightInGrams <= 4500) charge = 375;
-          else if (weightInGrams <= 5000) charge = 410;
-          else if (weightInGrams <= 6000) charge = 410 + 50; // For 5–6 kg
-          else if (weightInGrams <= 7000) charge = 350;      // For 6–7 kg
-          else if (weightInGrams <= 8000) charge = 400;      // For 7–8 kg
-          else if (weightInGrams <= 9000) charge = 450;      // For 8–9 kg
-          else if (weightInGrams <= 10000) charge = 500;     // For 9–10 kg
-          else charge = 500 + ((Math.ceil(weightInGrams / 1000) - 10) * 40); // Above 10 kg
-      } else if (['Karnataka', 'Kerala', 'Andhra Pradesh', 'Telangana'].includes(state)) {
-          if (weightInGrams <= 250) charge = 85;
-          else if (weightInGrams <= 500) charge = 105;
-          else if (weightInGrams <= 1000) charge = 150;
-          else if (weightInGrams <= 1500) charge = 195;
-          else if (weightInGrams <= 2000) charge = 240;
-          else if (weightInGrams <= 2500) charge = 285;
-          else if (weightInGrams <= 3000) charge = 330;
-          else if (weightInGrams <= 3500) charge = 375;
-          else if (weightInGrams <= 4000) charge = 420;
-          else if (weightInGrams <= 4500) charge = 465;
-          else if (weightInGrams <= 5000) charge = 510;
-          else if (weightInGrams <= 6000) charge = 510 + 60; // For 5–6 kg
-          else if (weightInGrams <= 7000) charge = 420;      // For 6–7 kg
-          else if (weightInGrams <= 8000) charge = 480;      // For 7–8 kg
-          else if (weightInGrams <= 9000) charge = 540;      // For 8–9 kg
-          else if (weightInGrams <= 10000) charge = 600;     // For 9–10 kg
-          else charge = 600 + ((Math.ceil(weightInGrams / 1000) - 10) * 50); // Above 10 kg
-      } else {
-          // Other states or Rest of India
-          if (weightInGrams <= 250) charge = 110;
-          else if (weightInGrams <= 500) charge = 140;
-          else if (weightInGrams <= 1000) charge = 220;
-          else if (weightInGrams <= 1500) charge = 300;
-          else if (weightInGrams <= 2000) charge = 380;
-          else if (weightInGrams <= 2500) charge = 460;
-          else if (weightInGrams <= 3000) charge = 540;
-          else if (weightInGrams <= 3500) charge = 620;
-          else if (weightInGrams <= 4000) charge = 700;
-          else if (weightInGrams <= 4500) charge = 780;
-          else if (weightInGrams <= 5000) charge = 860;
-          else if (weightInGrams <= 6000) charge = 860 + 155; // For 5–6 kg
-          else if (weightInGrams <= 7000) charge = 1085;      // For 6–7 kg
-          else if (weightInGrams <= 8000) charge = 1200;      // For 7–8 kg
-          else if (weightInGrams <= 9000) charge = 1350;      // For 8–9 kg
-          else if (weightInGrams <= 10000) charge = 1550;     // For 9–10 kg
-          else charge = 1550 + ((Math.ceil(weightInGrams / 1000) - 10) * 120); // Above 10 kg
-      }
-  
-      return charge;
-  };
+const axios = require("axios");
 
-  module.exports = { calculateDeliveryCharge };
+const calculateDeliveryCharge = async (weight, state) => {
+    // Convert weight to grams
+    const weightInGrams = weight * 1000;
+    console.log(weightInGrams);
+
+    // Fetch delivery charge data from Strapi API
+    const response = await axios.get('https://api.shriworks.com/api/delivery-charges?populate=*');
+    // const { data } = await response.json();
+    console.log(response.data.data, 'delivery charges');
+    // let delivery = [];
+    // delivery = data;
+    // Find the record for the given state
+    let stateData = response.data.data.find(item => item.attributes.State === state);
+	
+   // if (!stateData) return "State not found in the delivery charge table";
+   if (!stateData){
+        stateData = response.data.data.find(item => item.attributes.State === 'otherStates');
+        console.log(stateData, 'otherstates');
+    }
+    // Match the weight group using enumeration
+    const weightGroup = stateData.attributes.WeightGroups.find(group => {
+        const weightLimit = group.Weight;
+
+        if (weightLimit.startsWith("Upto")) {
+            const limitInGrams = parseInt(weightLimit.match(/\d+/)[0], 10);
+            console.log(parseInt(weightLimit.match(/\d+/)[0], 10),'upto');
+            return weightInGrams <= limitInGrams;
+        } else if (weightLimit.startsWith("Above")) {
+            const limitInGrams = parseInt(weightLimit.match(/\d+/)[0], 10);
+            console.log('above');
+            return weightInGrams > limitInGrams;
+        }
+    
+        // return false; // Fallback if weightLimit format doesn't match
+    });
+    console.log(weightGroup,'weight');
+    if (!weightGroup) return 0;
+
+    // Calculate the charge
+    let charge = weightGroup.baseRate;
+    if (weightGroup.Weight === "Above 10000 Gms" && weightGroup.additionalRatePerKg) {
+        const extraWeightInKg = Math.ceil((weightInGrams - 10000) / 1000); // Extra weight above 10 kg
+        charge += extraWeightInKg * weightGroup.additionalRatePerKg;
+    }
+    console.log(charge,'charge');
+    return charge;
+};
+module.exports = { calculateDeliveryCharge };

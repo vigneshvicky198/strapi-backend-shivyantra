@@ -3,7 +3,7 @@ const axios = require('axios');
 const { errors } = require('@strapi/utils');
 const { ApplicationError,NotFoundError } = errors;
 //const { Application } = require('twilio/lib/twiml/VoiceResponse');
-const api_url = 'https://api.shriworkscraft.com';
+const api_url = 'https://api.shriworks.com';
 module.exports = {
    async beforeCreate(event) {
       const { data, where, select, populate } = event.params;

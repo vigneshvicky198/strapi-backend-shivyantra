@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_delivery_weight_groups",
+  "info": {
+    "displayName": "WeightGroups",
+    "icon": "car",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Weight": {
+      "type": "enumeration",
+      "enum": [
+        "Upto 250 Gms",
+        "Upto 500 Gms",
+        "Upto 1000 Gms",
+        "Upto 1500 Gms",
+        "Upto 2000 Gms",
+        "Upto 2500 Gms",
+        "Upto 3000 Gms",
+        "Upto 3500 Gms",
+        "Upto 4000 Gms",
+        "Upto 4500 Gms",
+        "Upto 5000 Gms",
+        "Upto 5500 Gms",
+        "Upto 6000 Gms",
+        "Upto 6500 Gms",
+        "Upto 7000 Gms",
+        "Upto 7500 Gms",
+        "Upto 8000 Gms",
+        "Upto 8500 Gms",
+        "Upto 9000 Gms",
+        "Upto 9500 Gms",
+        "Upto 10000 Gms",
+        "Above 10000 Gms"
+      ]
+    },
+    "baseRate": {
+      "type": "decimal"
+    },
+    "additionalRatePerKg": {
+      "type": "integer"
+    }
+  }
+}

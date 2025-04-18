@@ -788,6 +788,22 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::transaction.transaction'
     >;
+    reviews: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::review.review'
+    >;
+    invoices: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::invoice.invoice'
+    >;
+    Address: Attribute.Text;
+    Mobile: Attribute.String;
+    City: Attribute.String;
+    State: Attribute.String;
+    Pincode: Attribute.String;
+    Landmark: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -868,6 +884,7 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
     singularName: 'category';
     pluralName: 'categories';
     displayName: 'Category';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -877,8 +894,13 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
     Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     products: Attribute.Relation<
       'api::category.category',
-      'oneToMany',
+      'manyToMany',
       'api::product.product'
+    >;
+    subcategories: Attribute.Relation<
+      'api::category.category',
+      'oneToMany',
+      'api::subcategory.subcategory'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -891,6 +913,69 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::category.category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContactContact extends Schema.CollectionType {
+  collectionName: 'contacts';
+  info: {
+    singularName: 'contact';
+    pluralName: 'contacts';
+    displayName: 'Contact';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Name: Attribute.String;
+    Email: Attribute.Email;
+    Message: Attribute.Text;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::contact.contact',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::contact.contact',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiDeliveryChargeDeliveryCharge extends Schema.CollectionType {
+  collectionName: 'delivery_charges';
+  info: {
+    singularName: 'delivery-charge';
+    pluralName: 'delivery-charges';
+    displayName: 'DeliveryCharges';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    State: Attribute.String;
+    WeightGroups: Attribute.Component<'delivery.weight-groups', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::delivery-charge.delivery-charge',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::delivery-charge.delivery-charge',
       'oneToOne',
       'admin::user'
     > &
@@ -921,6 +1006,47 @@ export interface ApiHomeSliderHomeSlider extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::home-slider.home-slider',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInvoiceInvoice extends Schema.CollectionType {
+  collectionName: 'invoices';
+  info: {
+    singularName: 'invoice';
+    pluralName: 'invoices';
+    displayName: 'Invoices';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Invoice: Attribute.Media<'files' | 'images'>;
+    user: Attribute.Relation<
+      'api::invoice.invoice',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    purchased_orders: Attribute.Relation<
+      'api::invoice.invoice',
+      'oneToMany',
+      'api::purchased-order.purchased-order'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::invoice.invoice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::invoice.invoice',
       'oneToOne',
       'admin::user'
     > &
@@ -969,22 +1095,30 @@ export interface ApiProductProduct extends Schema.CollectionType {
   attributes: {
     ProductName: Attribute.String;
     ProductImage: Attribute.Media<'images' | 'videos', true>;
-    category: Attribute.Relation<
-      'api::product.product',
-      'manyToOne',
-      'api::category.category'
-    >;
     SubTitle: Attribute.String;
     Offer: Attribute.Integer;
     Price: Attribute.Decimal;
     SKU: Attribute.String;
     Weight: Attribute.Float;
     Dimensions: Attribute.String;
-    Material: Attribute.Enumeration<
-      ['Gold', 'Silver', 'Brass', 'Copper', 'Panchalogam']
-    >;
+    Material: Attribute.Enumeration<['Gold', 'Silver', 'brass']>;
     AvailableQuantity: Attribute.Integer;
     Description: Attribute.Blocks;
+    reviews: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::review.review'
+    >;
+    subcategories: Attribute.Relation<
+      'api::product.product',
+      'manyToMany',
+      'api::subcategory.subcategory'
+    >;
+    categories: Attribute.Relation<
+      'api::product.product',
+      'manyToMany',
+      'api::category.category'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1009,6 +1143,7 @@ export interface ApiPurchasedOrderPurchasedOrder extends Schema.CollectionType {
     singularName: 'purchased-order';
     pluralName: 'purchased-orders';
     displayName: 'PurchasedOrders';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1025,6 +1160,12 @@ export interface ApiPurchasedOrderPurchasedOrder extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     Quantity: Attribute.Integer;
+    Notes: Attribute.Text;
+    invoice: Attribute.Relation<
+      'api::purchased-order.purchased-order',
+      'manyToOne',
+      'api::invoice.invoice'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1067,6 +1208,123 @@ export interface ApiRazorpayRazorpay extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::razorpay.razorpay',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiReviewReview extends Schema.CollectionType {
+  collectionName: 'reviews';
+  info: {
+    singularName: 'review';
+    pluralName: 'reviews';
+    displayName: 'Review';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Review: Attribute.Text;
+    Rating: Attribute.Integer;
+    Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    users_permissions_user: Attribute.Relation<
+      'api::review.review',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    product: Attribute.Relation<
+      'api::review.review',
+      'manyToOne',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::review.review',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::review.review',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubcategorySubcategory extends Schema.CollectionType {
+  collectionName: 'subcategories';
+  info: {
+    singularName: 'subcategory';
+    pluralName: 'subcategories';
+    displayName: 'Subcategory';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    text: Attribute.String;
+    products: Attribute.Relation<
+      'api::subcategory.subcategory',
+      'manyToMany',
+      'api::product.product'
+    >;
+    category: Attribute.Relation<
+      'api::subcategory.subcategory',
+      'manyToOne',
+      'api::category.category'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subcategory.subcategory',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::subcategory.subcategory',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTestimonialTestimonial extends Schema.CollectionType {
+  collectionName: 'testimonials';
+  info: {
+    singularName: 'testimonial';
+    pluralName: 'testimonials';
+    displayName: 'Testimonials';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Testimonial: Attribute.String;
+    Name: Attribute.String;
+    Location: Attribute.String;
+    Date: Attribute.Date;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::testimonial.testimonial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::testimonial.testimonial',
       'oneToOne',
       'admin::user'
     > &
@@ -1133,11 +1391,17 @@ declare module '@strapi/types' {
       'api::blog.blog': ApiBlogBlog;
       'api::cart.cart': ApiCartCart;
       'api::category.category': ApiCategoryCategory;
+      'api::contact.contact': ApiContactContact;
+      'api::delivery-charge.delivery-charge': ApiDeliveryChargeDeliveryCharge;
       'api::home-slider.home-slider': ApiHomeSliderHomeSlider;
+      'api::invoice.invoice': ApiInvoiceInvoice;
       'api::page.page': ApiPagePage;
       'api::product.product': ApiProductProduct;
       'api::purchased-order.purchased-order': ApiPurchasedOrderPurchasedOrder;
       'api::razorpay.razorpay': ApiRazorpayRazorpay;
+      'api::review.review': ApiReviewReview;
+      'api::subcategory.subcategory': ApiSubcategorySubcategory;
+      'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'api::transaction.transaction': ApiTransactionTransaction;
     }
   }

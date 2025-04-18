@@ -24,12 +24,6 @@
         "videos"
       ]
     },
-    "category": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::category.category",
-      "inversedBy": "products"
-    },
     "SubTitle": {
       "type": "string"
     },
@@ -53,9 +47,7 @@
       "enum": [
         "Gold",
         "Silver",
-        "Brass",
-        "Copper",
-        "Panchalogam"
+        "brass"
       ]
     },
     "AvailableQuantity": {
@@ -63,6 +55,24 @@
     },
     "Description": {
       "type": "blocks"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
+    },
+    "subcategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subcategory.subcategory",
+      "inversedBy": "products"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "products"
     }
   }
 }

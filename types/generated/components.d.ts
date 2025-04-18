@@ -1,5 +1,21 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
+export interface SubSubcategory extends Schema.Component {
+  collectionName: 'components_sub_subcategories';
+  info: {
+    displayName: 'subcategory';
+  };
+  attributes: {
+    tittle: Attribute.String;
+    images: Attribute.Media<'images', true>;
+    products: Attribute.Relation<
+      'sub.subcategory',
+      'oneToMany',
+      'api::product.product'
+    >;
+  };
+}
+
 export interface ProductsProductCard extends Schema.Component {
   collectionName: 'components_products_product_cards';
   info: {
@@ -65,6 +81,45 @@ export interface HomePageFactoryClips extends Schema.Component {
   };
 }
 
+export interface DeliveryWeightGroups extends Schema.Component {
+  collectionName: 'components_delivery_weight_groups';
+  info: {
+    displayName: 'WeightGroups';
+    icon: 'car';
+    description: '';
+  };
+  attributes: {
+    Weight: Attribute.Enumeration<
+      [
+        'Upto 250 Gms',
+        'Upto 500 Gms',
+        'Upto 1000 Gms',
+        'Upto 1500 Gms',
+        'Upto 2000 Gms',
+        'Upto 2500 Gms',
+        'Upto 3000 Gms',
+        'Upto 3500 Gms',
+        'Upto 4000 Gms',
+        'Upto 4500 Gms',
+        'Upto 5000 Gms',
+        'Upto 5500 Gms',
+        'Upto 6000 Gms',
+        'Upto 6500 Gms',
+        'Upto 7000 Gms',
+        'Upto 7500 Gms',
+        'Upto 8000 Gms',
+        'Upto 8500 Gms',
+        'Upto 9000 Gms',
+        'Upto 9500 Gms',
+        'Upto 10000 Gms',
+        'Above 10000 Gms'
+      ]
+    >;
+    baseRate: Attribute.Decimal;
+    additionalRatePerKg: Attribute.Integer;
+  };
+}
+
 export interface BlocksSlider extends Schema.Component {
   collectionName: 'components_blocks_sliders';
   info: {
@@ -81,10 +136,12 @@ export interface BlocksSlider extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
+      'sub.subcategory': SubSubcategory;
       'products.product-card': ProductsProductCard;
       'products.category': ProductsCategory;
       'home-page.section': HomePageSection;
       'home-page.factory-clips': HomePageFactoryClips;
+      'delivery.weight-groups': DeliveryWeightGroups;
       'blocks.slider': BlocksSlider;
     }
   }

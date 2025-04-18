@@ -1,5 +1,5 @@
 {
-  "name": "api-shriworkscraft-com",
+  "name": "",
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
@@ -19,10 +19,13 @@
     "@strapi/strapi": "4.25.6",
     "axios": "^1.7.7",
     "better-sqlite3": "8.6.0",
+    "nodemailer": "^6.9.16",
+    "pdfkit": "^0.15.2",
     "razorpay": "^2.9.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "5.3.4",
+    "sharp": "^0.33.5",
     "styled-components": "5.3.3",
     "twilio": "^5.3.0"
   },

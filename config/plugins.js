@@ -6,20 +6,21 @@ module.exports = ({ env }) => ({
           sizeLimit: 3000 * 1024 * 1024 // 3GB in bytes
         }
       },
-         email: {
+      email: {
         config: {
           provider: 'nodemailer',
           providerOptions: {
-            service: 'gmail',
+            host: 'smtp.gmail.com',  // SMTP Host
+            port: 465,               // SSL Port (use 587 for TLS)
+            secure: true,            // Set to true for SSL
             auth: {
-              user: env('SMTP_USERNAME'),
-              pass: env('SMTP_PASSWORD'),
+              user: env('GMAIL_USER'),    // Gmail address (e.g., your-email@gmail.com)
+              pass: env('GMAIL_APP_PASSWORD'),  // Your generated App Password
             },
-            // ... any custom nodemailer options
           },
           settings: {
-            defaultFrom: env('SMTP_USERNAME'),
-            defaultReplyTo: env('SMTP_USERNAME'),
+            defaultFrom: env('GMAIL_USER'), // Default sender email address
+            defaultReplyTo: env('GMAIL_USER'),
           },
         },
       },
