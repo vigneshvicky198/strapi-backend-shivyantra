@@ -323,5 +323,5 @@ const sendOrderEmail = async (emailId, pdf,customerDetails) => {
     console.log(err);
 }
 };
-  module.exports = {generateInvoice, sendOrderEmail};
- 
+  
+module.exports = {generateInvoice, sendOrderEmail};
